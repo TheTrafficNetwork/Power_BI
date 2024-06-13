@@ -42,24 +42,27 @@ async def get_availability(session, device):
     LIBRENMS_URL = os.getenv("LIBRENMS_URL")
     LIBRENMS_API_KEY = os.getenv("LIBRENMS_API_KEY")
     headers = {"X-Auth-Token": LIBRENMS_API_KEY}
-    device_ip = device.primary_ip4["address"].split("/")[0]
+    try:
+        device_ip = device.primary_ip4["address"].split("/")[0]
 
-    async with session.get(
-        LIBRENMS_URL + device_ip + "/availability", headers=headers
-    ) as response:
-        data = await response.json()
+        async with session.get(
+            LIBRENMS_URL + device_ip + "/availability", headers=headers
+        ) as response:
+            data = await response.json()
 
-    if not data["availability"]:
-        Progress().console.print(f"[red]{device.name} issue in LibreNMS")
-        return None
+        if not data["availability"]:
+            Progress().console.print(f"[red]{device.name} issue in LibreNMS")
+            return None
 
-    list_of_avails = data["availability"]
-    availability = {"Name": device.name}
-    availability.update(
-        {avail["duration"]: avail["availability_perc"] for avail in list_of_avails}
-    )
+        list_of_avails = data["availability"]
+        availability = {"Name": device.name}
+        availability.update(
+            {avail["duration"]: avail["availability_perc"] for avail in list_of_avails}
+        )
 
-    return availability
+        return availability
+    except TypeError:
+        pass
 
 
 async def multi_async(description: str, task_item: callable, device_list: list) -> None:
