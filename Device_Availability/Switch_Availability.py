@@ -44,7 +44,10 @@ def get_list_of_devices():
     NETBOX_URL = os.getenv("NETBOX_URL")
     nb = pynetbox.api(NETBOX_URL, token=NETBOX_API_KEY)
     nb.http_session.verify = False
-    device_list = list(nb.dcim.devices.filter(status="active", tag=["librenms"]))
+    device_list = list(nb.dcim.devices.filter(
+        status="active", 
+        tenant="cos", 
+        tag=["librenms"]))
     return device_list
 
 
@@ -117,7 +120,7 @@ def multi_proc(description: str, task_item: Callable, device_list: list) -> None
         task_item (Callable): Function that will be ran
         device_list (list): List of inputs for the function to work through
     """
-    max_processes = 1
+    max_processes = 20
     with Progress() as progress:
         task_id = progress.add_task(description, total=len(device_list))
         with Pool(processes=max_processes) as pool:

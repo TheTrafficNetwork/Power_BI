@@ -34,7 +34,7 @@ async def get_list_of_devices():
     NETBOX_URL = os.getenv("NETBOX_URL")
     nb = pynetbox.api(NETBOX_URL, token=NETBOX_API_KEY)
     nb.http_session.verify = False
-    device_list = list(nb.dcim.devices.filter(status="active", tag=["librenms"]))
+    device_list = list(nb.dcim.devices.filter(status="active", tenant="cos", tag=["librenms"]))
     return device_list
 
 
