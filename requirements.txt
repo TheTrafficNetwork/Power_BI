@@ -1,0 +1,6 @@
+aiohttp==3.11.12
+pynetbox==7.4.1
+python-dotenv==1.2.2
+Requests==2.33.1
+rich==15.0.0
+urllib3==2.6.3
